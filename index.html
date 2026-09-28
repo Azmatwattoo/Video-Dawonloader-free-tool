@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AzDar Downloader V1</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#07111f;
+    color:#fff;
+    min-height:100vh;
+}
+
+/* NAVBAR */
+
+.navbar{
+    width:100%;
+    padding:18px 7%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(7,17,31,.92);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    position:sticky;
+    top:0;
+    z-index:100;
+    backdrop-filter:blur(12px);
+}
+
+.logo{
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.logo span{
+    color:#25d9ff;
+}
+
+.nav-links{
+    display:flex;
+    gap:25px;
+}
+
+.nav-links a{
+    color:#cbd5e1;
+    text-decoration:none;
+    font-size:14px;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#25d9ff;
+}
+
+/* HERO */
+
+.hero{
+    min-height:650px;
+    padding:90px 7% 70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+}
+
+.glow{
+    position:absolute;
+    width:350px;
+    height:350px;
+    background:#00bfff;
+    opacity:.12;
+    filter:blur(100px);
+    border-radius:50%;
+}
+
+.glow.one{
+    top:-100px;
+    left:-100px;
+}
+
+.glow.two{
+    bottom:-120px;
+    right:-80px;
+    background:#7c3aed;
+}
+
+.hero-content{
+    max-width:850px;
+    position:relative;
+    z-index:2;
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 15px;
+    border:1px solid rgba(37,217,255,.3);
+    border-radius:50px;
+    color:#25d9ff;
+    background:rgba(37,217,255,.07);
+    font-size:13px;
+    margin-bottom:22px;
+}
+
+.hero h1{
+    font-size:clamp(42px,7vw,76px);
+    line-height:1.05;
+    margin-bottom:20px;
+}
+
+.hero h1 span{
+    color:#25d9ff;
+}
+
+.hero p{
+    color:#aab7c8;
+    font-size:18px;
+    line-height:1.7;
+    max-width:650px;
+    margin:0 auto 35px;
+}
+
+/* DOWNLOADER */
+
+.download-box{
+    max-width:760px;
+    margin:auto;
+    padding:10px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    display:flex;
+    gap:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+
+.url-input{
+    flex:1;
+    background:#0c192a;
+    border:none;
+    outline:none;
+    color:#fff;
+    padding:18px;
+    border-radius:12px;
+    font-size:15px;
+    min-width:0;
+}
+
+.url-input::placeholder{
+    color:#718096;
+}
+
+.analyze-btn{
+    border:none;
+    padding:0 25px;
+    border-radius:12px;
+    background:#25d9ff;
+    color:#04101c;
+    font-weight:800;
+    cursor:pointer;
+    transition:.3s;
+    white-space:nowrap;
+}
+
+.analyze-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(37,217,255,.25);
+}
+
+.supported{
+    margin-top:18px;
+    color:#718096;
+    font-size:13px;
+}
+
+/* RESULT */
+
+.result-area{
+    display:none;
+    max-width:760px;
+    margin:35px auto 0;
+    text-align:left;
+    background:#0b1829;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:20px;
+}
+
+.result-top{
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
+
+.thumbnail{
+    width:150px;
+    height:95px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#173b55,#0a1727);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:38px;
+    flex-shrink:0;
+}
+
+.result-info{
+    flex:1;
+}
+
+.result-info h3{
+    margin-bottom:8px;
+    font-size:18px;
+}
+
+.result-info p{
+    margin:0;
+    font-size:13px;
+    color:#8fa0b5;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+
+.option{
+    padding:14px;
+    background:#101f33;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    text-align:center;
+}
+
+.option strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.option small{
+    color:#7f91a8;
+}
+
+.download-option{
+    margin-top:8px;
+    width:100%;
+    border:none;
+    padding:11px;
+    border-radius:9px;
+    background:#25d9ff;
+    color:#04101c;
+    font-weight:700;
+    cursor:pointer;
+}
+
+/* FEATURES */
+
+.section{
+    padding:80px 7%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.section-title h2{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.section-title p{
+    color:#8190a5;
+}
+
+.features{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.feature-card{
+    padding:30px;
+    background:#0b1829;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    transition:.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(37,217,255,.3);
+}
+
+.icon{
+    width:52px;
+    height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px;
+    background:rgba(37,217,255,.1);
+    font-size:25px;
+    margin-bottom:20px;
+}
+
+.feature-card h3{
+    margin-bottom:10px;
+}
+
+.feature-card p{
+    color:#8190a5;
+    line-height:1.6;
+    font-size:14px;
+}
+
+/* PLATFORMS */
+
+.platforms{
+    max-width:1000px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.platform{
+    padding:25px 15px;
+    text-align:center;
+    background:#0b1829;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+}
+
+.platform .platform-icon{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.platform p{
+    color:#aebbd0;
+    font-size:14px;
+}
+
+/* FAQ */
+
+.faq{
+    max-width:800px;
+    margin:auto;
+}
+
+details{
+    background:#0b1829;
+    border:1px solid rgba(255,255,255,.08);
+    margin-bottom:12px;
+    border-radius:14px;
+    padding:18px 20px;
+}
+
+summary{
+    cursor:pointer;
+    font-weight:700;
+}
+
+details p{
+    color:#8c9bb0;
+    line-height:1.6;
+    margin-top:14px;
+    font-size:14px;
+}
+
+/* FOOTER */
+
+footer{
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:30px 7%;
+    text-align:center;
+    color:#68788e;
+    font-size:13px;
+}
+
+footer strong{
+    color:#25d9ff;
+}
+
+/* LOADING */
+
+.loading{
+    display:none;
+    margin-top:20px;
+    color:#25d9ff;
+    font-size:14px;
+}
+
+.spinner{
+    width:18px;
+    height:18px;
+    border:2px solid rgba(255,255,255,.2);
+    border-top-color:#25d9ff;
+    border-radius:50%;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:8px;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:750px){
+
+    .navbar{
+        padding:16px 5%;
+    }
+
+    .nav-links{
+        display:none;
+    }
+
+    .hero{
+        padding:70px 5% 50px;
+        min-height:600px;
+    }
+
+    .hero p{
+        font-size:15px;
+    }
+
+    .download-box{
+        flex-direction:column;
+        padding:10px;
+    }
+
+    .analyze-btn{
+        height:52px;
+    }
+
+    .result-top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .thumbnail{
+        width:100%;
+        height:170px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    .platforms{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .section{
+        padding:60px 5%;
+    }
+
+    .section-title h2{
+        font-size:30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        AzDar <span>Downloader</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#faq">FAQ</a>
+    </div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+
+    <div class="hero-content">
+
+        <div class="badge">
+            ⚡ Fast • Simple • Modern
+        </div>
+
+        <h1>
+            Download Your
+            <span>Media</span>
+            Easily
+        </h1>
+
+        <p>
+            Paste your media URL below and get ready to download
+            your favorite content in your preferred format.
+        </p>
+
+        <div class="download-box">
+
+            <input
+                type="text"
+                id="urlInput"
+                class="url-input"
+                placeholder="Paste video URL here..."
+            >
+
+            <button
+                class="analyze-btn"
+                onclick="analyzeURL()"
+            >
+                ⚡ Analyze
+            </button>
+
+        </div>
+
+        <div class="supported">
+            Supports multiple media platforms
+        </div>
+
+        <div class="loading" id="loading">
+            <span class="spinner"></span>
+            Analyzing URL...
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div class="result-area" id="resultArea">
+
+            <div class="result-top">
+
+                <div class="thumbnail">
+                    ▶️
+                </div>
+
+                <div class="result-info">
+
+                    <h3 id="videoTitle">
+                        Media Ready
+                    </h3>
+
+                    <p id="videoURL">
+                        Your URL has been analyzed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="options">
+
+                <div class="option">
+                    <strong>360p</strong>
+                    <small>MP4 Video</small>
+                    <button
+                        class="download-option"
+                        onclick="demoDownload('360p')"
+                    >
+                        Download
+                    </button>
+                </div>
+
+                <div class="option">
+                    <strong>720p</strong>
+                    <small>HD MP4</small>
+                    <button
+                        class="download-option"
+                        onclick="demoDownload('720p')"
+                    >
+                        Download
+                    </button>
+                </div>
+
+                <div class="option">
+                    <strong>1080p</strong>
+                    <small>Full HD</small>
+                    <button
+                        class="download-option"
+                        onclick="demoDownload('1080p')"
+                    >
+                        Download
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section class="section" id="features">
+
+    <div class="section-title">
+
+        <h2>Why AzDar Downloader?</h2>
+
+        <p>
+            Designed for a simple and smooth downloading experience.
+        </p>
+
+    </div>
+
+
+    <div class="features">
+
+        <div class="feature-card">
+
+            <div class="icon">⚡</div>
+
+            <h3>Fast Experience</h3>
+
+            <p>
+                Simple interface designed to make the download
+                process quick and easy.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">📱</div>
+
+            <h3>Mobile Friendly</h3>
+
+            <p>
+                Works beautifully on phones, tablets and desktop
+                screens.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">🔒</div>
+
+            <h3>Simple & Clean</h3>
+
+            <p>
+                No complicated interface. Just paste your link
+                and continue.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PLATFORMS -->
+
+<section class="section" id="platforms">
+
+    <div class="section-title">
+
+        <h2>Supported Platforms</h2>
+
+        <p>
+            Platform support will be connected through the backend
+            in the next version.
+        </p>
+
+    </div>
+
+
+    <div class="platforms">
+
+        <div class="platform">
+            <div class="platform-icon">▶️</div>
+            <p>YouTube</p>
+        </div>
+
+        <div class="platform">
+            <div class="platform-icon">🎵</div>
+            <p>TikTok</p>
+        </div>
+
+        <div class="platform">
+            <div class="platform-icon">📘</div>
+            <p>Facebook</p>
+        </div>
+
+        <div class="platform">
+            <div class="platform-icon">📸</div>
+            <p>Instagram</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FAQ -->
+
+<section class="section" id="faq">
+
+    <div class="section-title">
+
+        <h2>Frequently Asked Questions</h2>
+
+        <p>
+            Some basic information about AzDar Downloader.
+        </p>
+
+    </div>
+
+
+    <div class="faq">
+
+        <details>
+
+            <summary>
+                How do I download a video?
+            </summary>
+
+            <p>
+                Paste a supported media URL into the input box
+                and press Analyze. Available formats will then
+                appear when the backend is connected.
+            </p>
+
+        </details>
+
+
+        <details>
+
+            <summary>
+                Is AzDar Downloader free?
+            </summary>
+
+            <p>
+                The V1 frontend is completely free to use.
+                Hosting and any third-party API costs may depend
+                on the final backend implementation.
+            </p>
+
+        </details>
+
+
+        <details>
+
+            <summary>
+                Can I use it on my phone?
+            </summary>
+
+            <p>
+                Yes. The website is responsive and designed for
+                Android, iPhone, tablet and desktop screens.
+            </p>
+
+        </details>
+
+
+        <details>
+
+            <summary>
+                Does V1 actually download videos?
+            </summary>
+
+            <p>
+                V1 is the frontend prototype. The actual media
+                extraction and downloading engine will be added
+                through a backend/API in a later version.
+            </p>
+
+        </details>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    © 2026 <strong>AzDar Downloader</strong>.
+    All rights reserved.
+
+</footer>
+
+
+<script>
+
+function analyzeURL(){
+
+    const input = document.getElementById("urlInput");
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("resultArea");
+
+    const url = input.value.trim();
+
+    if(url === ""){
+
+        alert("Please paste a video URL first.");
+
+        input.focus();
+
+        return;
+    }
+
+    loading.style.display = "block";
+    result.style.display = "none";
+
+
+    setTimeout(function(){
+
+        loading.style.display = "none";
+
+        result.style.display = "block";
+
+        document.getElementById("videoURL").textContent = url;
+
+        document.getElementById("videoTitle").textContent =
+            "Media Ready for Download";
+
+        result.scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
+
+    },1200);
+
+}
+
+
+function demoDownload(quality){
+
+    alert(
+        "Demo mode: " +
+        quality +
+        " download selected.\n\n" +
+        "Actual downloading will be connected in the backend version."
+    );
+
+}
+
+</script>
+
+</body>
+</html>
